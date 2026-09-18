@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { LayoutDashboard, Package, ShoppingBag } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { isSupabaseConfigured } from '../lib/supabase'
+import { useSEO } from '../lib/seo'
 import { ProductsPanel } from './admin/ProductsPanel'
 import { OrdersPanel } from './admin/OrdersPanel'
 
@@ -19,6 +20,13 @@ function isAdminAvailable(
 export default function AdminDashboardPage() {
   const { user, profile, isDemo } = useAuth()
   const [tab, setTab] = useState<Tab>('dashboard')
+
+  useSEO({
+    title: 'Admin Dashboard',
+    description: 'Magen World admin dashboard – manage your product catalogue and customer orders.',
+    path: '/admin',
+    noindex: true,
+  })
 
   if (!isAdminAvailable(user, profile?.role)) {
     return <Navigate to="/auth" state={{ from: '/admin' }} replace />

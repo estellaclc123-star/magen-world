@@ -155,7 +155,7 @@ export function ProductsPanel({ isAdmin }: { isAdmin: boolean }) {
                       <div>
                         <p className="font-medium text-stone-900">{p.name}</p>
                         <p className="text-xs text-stone-500">
-                          {p.featured && <span className="text-amber-600">Featured · </span>}
+                          {p.featured && <span className="text-amber-700">Featured · </span>}
                           {p.original_price ? 'On offer' : 'Full price'}
                         </p>
                       </div>
@@ -165,7 +165,7 @@ export function ProductsPanel({ isAdmin }: { isAdmin: boolean }) {
                   <td className="px-4 py-3">
                     <p className="font-semibold text-stone-900">{formatPrice(p.price)}</p>
                     {p.original_price && p.original_price > p.price && (
-                      <p className="text-xs text-stone-400 line-through">
+                      <p className="text-xs text-stone-500 line-through">
                         {formatPrice(p.original_price)}
                       </p>
                     )}
@@ -176,7 +176,7 @@ export function ProductsPanel({ isAdmin }: { isAdmin: boolean }) {
                         p.stock <= 0
                           ? 'text-rose-600'
                           : p.stock <= 5
-                            ? 'text-amber-600'
+                            ? 'text-amber-700'
                             : 'text-stone-700'
                       }`}
                     >
@@ -260,7 +260,7 @@ export function ProductsPanel({ isAdmin }: { isAdmin: boolean }) {
       )}
 
       {!isAdmin && (
-        <p className="mt-4 text-xs text-stone-400">
+        <p className="mt-4 text-xs text-stone-500">
           You are viewing products in demo mode — changes are stored locally in your browser.
         </p>
       )}

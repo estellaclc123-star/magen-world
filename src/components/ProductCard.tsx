@@ -61,13 +61,13 @@ export function ProductCard({ product, onQuickAdd }: ProductCardProps) {
           <div>
             <p className="text-lg font-bold text-stone-900">{formatPrice(product.price)}</p>
             {product.original_price && product.original_price > product.price && (
-              <p className="text-xs text-stone-400 line-through">
+              <p className="text-xs text-stone-500 line-through">
                 {formatPrice(product.original_price)}
               </p>
             )}
           </div>
           {lowStock && !outOfStock && (
-            <span className="text-xs font-medium text-amber-600">Only {product.stock} left</span>
+            <span className="text-xs font-medium text-amber-700">Only {product.stock} left</span>
           )}
         </div>
 

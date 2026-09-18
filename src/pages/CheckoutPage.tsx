@@ -14,17 +14,33 @@ import { formatPrice } from '../lib/format'
 import { PAYMENT_METHODS, type PaymentMethod } from '../lib/types'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useSEO } from '../lib/seo'
+
+interface FieldErrors {
+  name?: string
+  email?: string
+  phone?: string
+  address?: string
+}
 
 export default function CheckoutPage() {
   const { items, subtotal, deliveryFee, total, clearCart } = useCart()
   const { user, isDemo } = useAuth()
   const navigate = useNavigate()
 
+  useSEO({
+    title: 'Checkout',
+    description: 'Complete your order at Magen World with cash on delivery or mobile money.',
+    path: '/checkout',
+    noindex: true,
+  })
+
   const [name, setName] = useState(() => (isDemo ? 'Demo Customer' : ''))
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [address, setAddress] = useState('')
   const [payment, setPayment] = useState<PaymentMethod>('cash_on_delivery')
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -36,24 +52,31 @@ export default function CheckoutPage() {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const phonePattern = /^\+?[0-9][0-9 ()-]{7,19}$/
 
-  const validate = (): string => {
-    if (needsAuth) return 'Please sign in to place an order.'
-    if (name.trim().length === 0) return 'Please enter your full name.'
-    if (email.trim().length === 0) return 'Please enter your email address.'
-    if (name.trim().length > 120) return 'Name is too long.'
-    if (!emailPattern.test(email.trim())) return 'Please enter a valid email address.'
-    if (!phonePattern.test(phone.trim())) return 'Please enter a valid phone number (8–20 digits).'
-    if (address.trim().length === 0) return 'Please enter your delivery address.'
-    if (address.trim().length > 500) return 'Address is too long.'
-    return ''
+  const validate = (): FieldErrors => {
+    const errors: FieldErrors = {}
+    if (!needsAuth && name.trim().length === 0) errors.name = 'Please enter your full name.'
+    if (name.trim().length > 120) errors.name = 'Name is too long.'
+    if (email.trim().length === 0) errors.email = 'Please enter your email address.'
+    else if (!emailPattern.test(email.trim())) errors.email = 'Please enter a valid email address.'
+    if (phone.trim().length === 0) errors.phone = 'Please enter your phone number.'
+    else if (!phonePattern.test(phone.trim()))
+      errors.phone = 'Please enter a valid phone number (8–20 digits).'
+    if (address.trim().length === 0) errors.address = 'Please enter your delivery address.'
+    else if (address.trim().length > 500) errors.address = 'Address is too long.'
+    return errors
   }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
-    const validationError = validate()
-    if (validationError) {
-      setError(validationError)
+    setFieldErrors({})
+    if (needsAuth) {
+      setError('Please sign in to place an order.')
+      return
+    }
+    const errors = validate()
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       return
     }
 
@@ -118,8 +141,15 @@ export default function CheckoutPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Ama Mensah"
+                  aria-invalid={fieldErrors.name ? true : undefined}
+                  aria-describedby={fieldErrors.name ? 'checkout-name-error' : undefined}
                   className="w-full rounded-xl border border-stone-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 />
+                {fieldErrors.name && (
+                  <p id="checkout-name-error" className="mt-1.5 text-xs font-medium text-rose-600">
+                    {fieldErrors.name}
+                  </p>
+                )}
               </div>
               <div>
                 <label htmlFor="checkout-email" className="mb-1.5 block text-sm font-medium text-stone-700">
@@ -131,8 +161,15 @@ export default function CheckoutPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@example.com"
+                  aria-invalid={fieldErrors.email ? true : undefined}
+                  aria-describedby={fieldErrors.email ? 'checkout-email-error' : undefined}
                   className="w-full rounded-xl border border-stone-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 />
+                {fieldErrors.email && (
+                  <p id="checkout-email-error" className="mt-1.5 text-xs font-medium text-rose-600">
+                    {fieldErrors.email}
+                  </p>
+                )}
               </div>
               <div>
                 <label htmlFor="checkout-phone" className="mb-1.5 block text-sm font-medium text-stone-700">
@@ -143,8 +180,15 @@ export default function CheckoutPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="e.g. 024 000 0000"
+                  aria-invalid={fieldErrors.phone ? true : undefined}
+                  aria-describedby={fieldErrors.phone ? 'checkout-phone-error' : undefined}
                   className="w-full rounded-xl border border-stone-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 />
+                {fieldErrors.phone && (
+                  <p id="checkout-phone-error" className="mt-1.5 text-xs font-medium text-rose-600">
+                    {fieldErrors.phone}
+                  </p>
+                )}
               </div>
               <div className="sm:col-span-2">
                 <label htmlFor="checkout-address" className="mb-1.5 block text-sm font-medium text-stone-700">
@@ -156,8 +200,15 @@ export default function CheckoutPage() {
                   onChange={(e) => setAddress(e.target.value)}
                   rows={3}
                   placeholder="House number, street, town/city, region"
+                  aria-invalid={fieldErrors.address ? true : undefined}
+                  aria-describedby={fieldErrors.address ? 'checkout-address-error' : undefined}
                   className="w-full resize-none rounded-xl border border-stone-300 px-4 py-2.5 text-sm outline-none transition focus:border-emerald-600 focus:ring-2 focus:ring-emerald-100"
                 />
+                {fieldErrors.address && (
+                  <p id="checkout-address-error" className="mt-1.5 text-xs font-medium text-rose-600">
+                    {fieldErrors.address}
+                  </p>
+                )}
               </div>
             </div>
           </section>

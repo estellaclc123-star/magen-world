@@ -32,6 +32,7 @@ cp .env.example .env
 
 - `VITE_SUPABASE_URL` — your project URL (e.g. `https://xxxx.supabase.co`)
 - `VITE_SUPABASE_ANON_KEY` — your publishable anon key
+- `VITE_GA_MEASUREMENT_ID` *(optional)* — Google Analytics 4 measurement ID. Analytics only loads after a visitor accepts the cookie consent banner; skip to disable.
 
 Only the **anon/publishable** key belongs in `.env`. Never expose the `service_role` key or database password.
 

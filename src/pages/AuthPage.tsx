@@ -4,15 +4,30 @@ import { AlertCircle, Loader2, LogIn, UserPlus, Store } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { isSupabaseConfigured } from '../lib/supabase'
 import { useToast } from '../context/ToastContext'
+import { useSEO } from '../lib/seo'
+
+interface FieldErrors {
+  fullName?: string
+  email?: string
+  password?: string
+}
 
 export default function AuthPage() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [error, setError] = useState('')
   const [info, setInfo] = useState('')
   const [submitting, setSubmitting] = useState(false)
+
+  useSEO({
+    title: mode === 'signin' ? 'Sign In' : 'Create Account',
+    description: 'Sign in to your Magen World account or create a new account to track orders.',
+    path: '/auth',
+    noindex: true,
+  })
 
   const { signIn, signUp, demoSignIn, isDemo } = useAuth()
   const { toast } = useToast()
@@ -20,27 +35,46 @@ export default function AuthPage() {
   const location = useLocation()
   const from = (location.state as { from?: string } | null)?.from ?? '/account'
 
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  const validate = (): FieldErrors => {
+    const errors: FieldErrors = {}
+    if (mode === 'signup' && fullName.trim().length === 0) {
+      errors.fullName = 'Please enter your full name.'
+    }
+    if (email.trim().length === 0) {
+      errors.email = 'Please enter your email address.'
+    } else if (!emailPattern.test(email.trim())) {
+      errors.email = 'Please enter a valid email address.'
+    }
+    if (password.length === 0) {
+      errors.password = 'Please enter a password.'
+    } else if (password.length < 6) {
+      errors.password = 'Password must be at least 6 characters.'
+    }
+    return errors
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
     setInfo('')
+    setFieldErrors({})
 
     if (!isSupabaseConfigured) {
       setError('Connect Supabase in .env to enable accounts. In demo mode, use the demo store below.')
       return
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.')
+
+    const errors = validate()
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors)
       return
     }
 
     setSubmitting(true)
     try {
       if (mode === 'signup') {
-        if (fullName.trim().length === 0) {
-          setError('Please enter your full name.')
-          return
-        }
         await signUp(email, password, fullName.trim())
         setInfo(
           'Account created! A confirmation email may have been sent. You can now sign in.',
@@ -133,8 +167,15 @@ export default function AuthPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Your full name"
+                aria-invalid={fieldErrors.fullName ? true : undefined}
+                aria-describedby={fieldErrors.fullName ? 'auth-name-error' : undefined}
                 className={inputClasses}
               />
+              {fieldErrors.fullName && (
+                <p id="auth-name-error" className="mt-1.5 text-xs font-medium text-rose-600">
+                  {fieldErrors.fullName}
+                </p>
+              )}
             </div>
           )}
 
@@ -148,8 +189,15 @@ export default function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
+              aria-invalid={fieldErrors.email ? true : undefined}
+              aria-describedby={fieldErrors.email ? 'auth-email-error' : undefined}
               className={inputClasses}
             />
+            {fieldErrors.email && (
+              <p id="auth-email-error" className="mt-1.5 text-xs font-medium text-rose-600">
+                {fieldErrors.email}
+              </p>
+            )}
           </div>
 
           <div>
@@ -162,8 +210,15 @@ export default function AuthPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 6 characters"
+              aria-invalid={fieldErrors.password ? true : undefined}
+              aria-describedby={fieldErrors.password ? 'auth-password-error' : undefined}
               className={inputClasses}
             />
+            {fieldErrors.password && (
+              <p id="auth-password-error" className="mt-1.5 text-xs font-medium text-rose-600">
+                {fieldErrors.password}
+              </p>
+            )}
           </div>
 
           {error && (
@@ -194,7 +249,15 @@ export default function AuthPage() {
           </button>
 
           <p className="text-center text-xs text-stone-500">
-            By continuing you agree to Magen World&apos;s terms and privacy policy.
+            By continuing you agree to{' '}
+            <Link to="/terms" className="font-semibold text-emerald-700 hover:underline">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link to="/privacy" className="font-semibold text-emerald-700 hover:underline">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </form>
       </div>

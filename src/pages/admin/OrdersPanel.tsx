@@ -232,7 +232,7 @@ export function OrdersPanel({ isAdmin }: { isAdmin: boolean }) {
       )}
 
       {!isAdmin && (
-        <p className="mt-4 text-xs text-stone-400">
+        <p className="mt-4 text-xs text-stone-500">
           You are viewing orders in demo mode — changes are stored locally in your browser.
         </p>
       )}

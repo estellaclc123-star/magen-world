@@ -2,6 +2,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import { CheckCircle2, PackageSearch, Truck } from 'lucide-react'
 import { formatPrice } from '../lib/format'
 import { useAuth } from '../context/AuthContext'
+import { useSEO } from '../lib/seo'
 
 interface ConfirmationState {
   subtotal?: number
@@ -14,6 +15,13 @@ export default function OrderConfirmationPage() {
   const location = useLocation()
   const state = (location.state ?? {}) as ConfirmationState
   const { user } = useAuth()
+
+  useSEO({
+    title: 'Order Confirmed',
+    description: 'Your Magen World order has been placed. Track it from your account.',
+    path: `/confirmation/${orderId ?? ''}`,
+    noindex: true,
+  })
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6 lg:px-8">

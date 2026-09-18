@@ -19,6 +19,7 @@ import { QuantityStepper } from '../components/QuantityStepper'
 import { Spinner } from '../components/Spinner'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
+import { useSEO } from '../lib/seo'
 
 export default function ProductDetailsPage() {
   const { id } = useParams<{ id: string }>()
@@ -30,6 +31,15 @@ export default function ProductDetailsPage() {
   const [related, setRelated] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
+
+  useSEO({
+    title: product ? product.name : 'Product',
+    description: product
+      ? `${product.name} – ${product.description.slice(0, 150)}`
+      : 'View product details at Magen World.',
+    path: product ? `/product/${product.id}` : '/product',
+    image: product?.image_url,
+  })
 
   useEffect(() => {
     let active = true
@@ -159,7 +169,7 @@ export default function ProductDetailsPage() {
           <div className="mt-5 flex items-end gap-3">
             <p className="text-3xl font-bold text-stone-900">{formatPrice(product.price)}</p>
             {product.original_price && product.original_price > product.price && (
-              <p className="pb-1 text-lg text-stone-400 line-through">
+              <p className="pb-1 text-lg text-stone-500 line-through">
                 {formatPrice(product.original_price)}
               </p>
             )}

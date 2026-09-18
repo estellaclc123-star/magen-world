@@ -9,12 +9,20 @@ import { Spinner } from '../components/Spinner'
 import { EmptyState } from '../components/EmptyState'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
+import { useSEO } from '../lib/seo'
 
 export default function AccountPage() {
   const { user, profile, isDemo, signOut } = useAuth()
   const { toast } = useToast()
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
+
+  useSEO({
+    title: 'My Account',
+    description: 'Manage your Magen World account, track your orders and update your details.',
+    path: '/account',
+    noindex: true,
+  })
 
   useEffect(() => {
     let active = true

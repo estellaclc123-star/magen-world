@@ -9,6 +9,7 @@ import { SectionHeader } from '../components/SectionHeader'
 import { Spinner } from '../components/Spinner'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
+import { useSEO } from '../lib/seo'
 
 function useProducts() {
   const [products, setProducts] = useState<Product[]>([])
@@ -56,6 +57,14 @@ export default function HomePage() {
   const categories = Array.from(new Set(products.map((p) => p.category))).slice(0, 5)
   const categoryImage = (name: string) =>
     products.find((p) => p.category === name)?.image_url ?? ''
+
+  useSEO({
+    title: 'Home',
+    description:
+      'Magen World – quality products in Electronics, Fashion, Accessories, Home & Living and Beauty, delivered across Ghana with pay-on-delivery options.',
+    path: '/',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80',
+  })
 
   const quickAdd = (product: Product) => {
     if (product.stock <= 0) {
@@ -270,9 +279,9 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
               {[
-                { value: '5+', label: 'Categories' },
-                { value: '50+', label: 'Products' },
-                { value: '24h', label: 'Support' },
+                { value: `${categories.length || '5'}`, label: 'Categories' },
+                { value: `${products.length || '0'}`, label: 'Products' },
+                { value: 'GH₵1,500+', label: 'Free delivery' },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-2xl bg-emerald-800/70 p-6">
                   <p className="font-display text-3xl font-bold text-amber-300">{stat.value}</p>

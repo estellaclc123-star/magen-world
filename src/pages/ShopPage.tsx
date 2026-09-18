@@ -9,6 +9,7 @@ import { Spinner } from '../components/Spinner'
 import { EmptyState } from '../components/EmptyState'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
+import { useSEO } from '../lib/seo'
 
 type SortKey = 'newest' | 'price_asc' | 'price_desc' | 'discount' | 'name'
 
@@ -40,6 +41,13 @@ export default function ShopPage() {
   const category = params.get('category') ?? ''
   const sort = (params.get('sort') ?? 'newest') as SortKey
   const inStockOnly = params.get('inStock') === '1'
+
+  useSEO({
+    title: category ? `Shop ${category}` : 'Shop',
+    description:
+      'Browse all products at Magen World – Electronics, Fashion, Accessories, Home & Living and Beauty with delivery across Ghana.',
+    path: '/shop',
+  })
 
   const filterCount =
     (searchQ ? 1 : 0) +
@@ -133,7 +141,7 @@ export default function ShopPage() {
   const filtersPanel = (
     <div className="space-y-6">
       <div>
-        <h3 className="mb-3 font-display text-sm font-semibold text-stone-900">Category</h3>
+        <h2 className="mb-3 font-display text-sm font-semibold text-stone-900">Category</h2>
         <ul className="space-y-1">
           <li>
             <button
@@ -163,7 +171,7 @@ export default function ShopPage() {
       </div>
 
       <div>
-        <h3 className="mb-3 font-display text-sm font-semibold text-stone-900">Price range</h3>
+        <h2 className="mb-3 font-display text-sm font-semibold text-stone-900">Price range</h2>
         <ul className="space-y-1">
           {PRICE_RANGES.map((range) => {
             const isActive =

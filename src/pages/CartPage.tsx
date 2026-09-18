@@ -5,10 +5,18 @@ import { FREE_DELIVERY_THRESHOLD } from '../lib/types'
 import { QuantityStepper } from '../components/QuantityStepper'
 import { EmptyState } from '../components/EmptyState'
 import { useCart } from '../context/CartContext'
+import { useSEO } from '../lib/seo'
 
 export default function CartPage() {
   const { items, subtotal, deliveryFee, total, setQuantity, removeItem } = useCart()
   const navigate = useNavigate()
+
+  useSEO({
+    title: 'Your Cart',
+    description: 'Review the items in your Magen World cart and check out with cash on delivery or mobile money.',
+    path: '/cart',
+    noindex: true,
+  })
 
   if (items.length === 0) {
     return (

@@ -179,7 +179,7 @@ export function ProductFormModal({
 
           <div>
             <label htmlFor="pf-image" className="mb-1.5 block text-sm font-medium text-stone-700">
-              Image URL <span className="text-stone-400">(optional if uploaded)</span>
+              Image URL <span className="text-stone-500">(optional if uploaded)</span>
             </label>
             <input
               id="pf-image"
@@ -241,7 +241,7 @@ export function ProductFormModal({
             </div>
             <div>
               <label htmlFor="pf-original" className="mb-1.5 block text-sm font-medium text-stone-700">
-                Original price <span className="text-stone-400">(before discount)</span>
+                Original price <span className="text-stone-500">(before discount)</span>
               </label>
               <input
                 id="pf-original"
