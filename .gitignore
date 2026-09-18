@@ -23,3 +23,5 @@ Thumbs.db
 
 # Misc
 *.tsbuildinfo
+# Local Netlify folder
+.netlify

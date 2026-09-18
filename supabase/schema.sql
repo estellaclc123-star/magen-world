@@ -1,4 +1,4 @@
-﻿begin;
+begin;
 
 create extension if not exists pgcrypto;
 
@@ -111,18 +111,21 @@ $body$;
 revoke all on function public.is_admin() from public;
 grant execute on function public.is_admin() to authenticated;
 
+drop policy if exists "products_public_read" on public.products;
 create policy "products_public_read"
   on public.products
   for select
   to anon, authenticated
   using (true);
 
+drop policy if exists "products_admin_insert" on public.products;
 create policy "products_admin_insert"
   on public.products
   for insert
   to authenticated
   with check (public.is_admin());
 
+drop policy if exists "products_admin_update" on public.products;
 create policy "products_admin_update"
   on public.products
   for update
@@ -130,18 +133,21 @@ create policy "products_admin_update"
   using (public.is_admin())
   with check (public.is_admin());
 
+drop policy if exists "products_admin_delete" on public.products;
 create policy "products_admin_delete"
   on public.products
   for delete
   to authenticated
   using (public.is_admin());
 
+drop policy if exists "profiles_select_own_or_admin" on public.profiles;
 create policy "profiles_select_own_or_admin"
   on public.profiles
   for select
   to authenticated
   using (id = auth.uid() or public.is_admin());
 
+drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own"
   on public.profiles
   for update
@@ -193,12 +199,14 @@ begin
 end
 $$;
 
+drop policy if exists "orders_select_own_or_admin" on public.orders;
 create policy "orders_select_own_or_admin"
   on public.orders
   for select
   to authenticated
   using (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "order_items_select_via_order" on public.order_items;
 create policy "order_items_select_via_order"
   on public.order_items
   for select
@@ -452,24 +460,28 @@ insert into storage.buckets (id, name, public)
 values ('product-images', 'product-images', true)
 on conflict (id) do nothing;
 
+drop policy if exists "product_images_public_read" on storage.objects;
 create policy "product_images_public_read"
   on storage.objects
   for select
   to public
   using (bucket_id = 'product-images');
 
+drop policy if exists "product_images_admin_insert" on storage.objects;
 create policy "product_images_admin_insert"
   on storage.objects
   for insert
   to authenticated
   with check (bucket_id = 'product-images' and public.is_admin());
 
+drop policy if exists "product_images_admin_update" on storage.objects;
 create policy "product_images_admin_update"
   on storage.objects
   for update
   to authenticated
   using (bucket_id = 'product-images' and public.is_admin());
 
+drop policy if exists "product_images_admin_delete" on storage.objects;
 create policy "product_images_admin_delete"
   on storage.objects
   for delete
