@@ -24,9 +24,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div>
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-800 text-amber-300">
-              <span className="font-display text-lg font-bold">M</span>
-            </span>
+            <img src="/favicon.svg" alt="Magen World logo" className="h-9 w-9 shrink-0 rounded-xl" />
             <span className="font-display text-xl font-bold text-white">
               Magen <span className="text-amber-300">World</span>
             </span>

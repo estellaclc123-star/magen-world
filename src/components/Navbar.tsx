@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom'
-import { Search, ShoppingCart, User, Menu, X, Package } from 'lucide-react'
+import { Search, ShoppingCart, User, Menu, X } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
@@ -54,9 +54,7 @@ export default function Navbar() {
           </button>
 
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-800 text-amber-300">
-              <Package className="h-5 w-5" />
-            </span>
+            <img src="/favicon.svg" alt="Magen World logo" className="h-9 w-9 shrink-0 rounded-xl" />
             <span className="font-display text-xl font-bold tracking-tight text-stone-900">
               Magen <span className="text-emerald-700">World</span>
             </span>
