@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Search, SlidersHorizontal, X, Check } from 'lucide-react'
 import { getProducts } from '../lib/api'
+import { categoryLabel, orderCategories } from '../lib/categories'
 import { SAMPLE_PRODUCTS } from '../lib/mockData'
 import type { Product } from '../lib/types'
 import { ProductCard } from '../components/ProductCard'
@@ -70,7 +71,7 @@ export default function ShopPage() {
   }, [])
 
   const categories = useMemo(
-    () => Array.from(new Set(products.map((p) => p.category))).sort((a, b) => a.localeCompare(b)),
+    () => orderCategories(Array.from(new Set(products.map((p) => p.category)))),
     [products],
   )
 
@@ -162,7 +163,7 @@ export default function ShopPage() {
                   category === cat ? 'bg-emerald-50 font-semibold text-emerald-800' : 'text-stone-600 hover:bg-stone-100'
                 }`}
               >
-                {cat}
+                {categoryLabel(cat)}
                 {category === cat && <Check className="h-4 w-4" />}
               </button>
             </li>

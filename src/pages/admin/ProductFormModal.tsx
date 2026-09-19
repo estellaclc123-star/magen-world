@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { X, ImagePlus, UploadCloud } from 'lucide-react'
+import { subcategoriesFor } from '../../lib/categories'
 import type { Product } from '../../lib/types'
 
 export interface ProductFormState {
@@ -190,38 +191,44 @@ export function ProductFormModal({
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="pf-name" className="mb-1.5 block text-sm font-medium text-stone-700">
-                Product name *
-              </label>
-              <input
-                id="pf-name"
-                value={form.name}
-                onChange={(e) => set('name', e.target.value)}
-                placeholder="e.g. Wireless Headphones"
-                className={inputClasses}
-              />
-            </div>
-            <div>
-              <label htmlFor="pf-category" className="mb-1.5 block text-sm font-medium text-stone-700">
-                Category *
-              </label>
-              <input
-                id="pf-category"
-                list="pf-category-list"
-                value={form.category}
-                onChange={(e) => set('category', e.target.value)}
-                placeholder="e.g. Electronics"
-                className={inputClasses}
-              />
-              <datalist id="pf-category-list">
-                {categories.map((cat) => (
-                  <option key={cat} value={cat} />
-                ))}
-              </datalist>
-            </div>
-          </div>
+<div className="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label htmlFor="pf-name" className="mb-1.5 block text-sm font-medium text-stone-700">
+          Product name *
+        </label>
+        <input
+          id="pf-name"
+          value={form.name}
+          onChange={(e) => set('name', e.target.value)}
+          placeholder="e.g. Wireless Headphones"
+          className={inputClasses}
+        />
+      </div>
+      <div>
+        <label htmlFor="pf-category" className="mb-1.5 block text-sm font-medium text-stone-700">
+          Category *
+        </label>
+        <select
+          id="pf-category"
+          value={form.category}
+          onChange={(e) => set('category', e.target.value)}
+          className={inputClasses}
+        >
+          <option value="">Select a category…</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+        {form.category && (
+          <p className="mt-1.5 text-xs text-stone-500">
+            List under: {subcategoriesFor(form.category).slice(0, 6).join(', ') || '—'}
+            {subcategoriesFor(form.category).length > 6 ? '…' : ''}
+          </p>
+        )}
+      </div>
+    </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>

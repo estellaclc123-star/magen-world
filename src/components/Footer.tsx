@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Phone, Mail } from 'lucide-react'
-import { CATEGORIES } from '../lib/mockData'
+import { CATEGORY_NAMES } from '../lib/categories'
 import { BUSINESS_NAME, ADDRESS, EMAIL, PHONE_DISPLAY, PHONE_TEL } from '../lib/business'
 
 const QUICK_LINKS = [
@@ -30,8 +30,8 @@ export default function Footer() {
             </span>
           </Link>
           <p className="mt-4 text-sm leading-relaxed text-emerald-200/80">
-            Quality products in Electronics, Fashion, Accessories, Home & Living and Beauty.
-            Delivered across Ghana with pay-on-delivery options.
+            {CATEGORY_NAMES.length}+ product categories from fashion, phones and electronics to
+            home, food, pet and gifts. Delivered across Ghana with pay-on-delivery options.
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export default function Footer() {
             Categories
           </h3>
           <ul className="mt-4 space-y-2.5 text-sm">
-            {CATEGORIES.map((cat) => (
+            {CATEGORY_NAMES.slice(0, 12).map((cat) => (
               <li key={cat}>
                 <Link
                   to={`/shop?category=${encodeURIComponent(cat)}`}
@@ -65,6 +65,11 @@ export default function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link to="/shop" className="font-semibold text-emerald-100 transition hover:text-amber-300">
+                View all categories →
+              </Link>
+            </li>
           </ul>
           <h3 className="mt-6 font-display text-sm font-semibold tracking-wide text-white uppercase">
             Legal

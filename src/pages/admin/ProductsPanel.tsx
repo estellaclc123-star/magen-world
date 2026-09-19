@@ -7,6 +7,7 @@ import {
   upsertProduct,
 } from '../../lib/api'
 import { formatPrice } from '../../lib/format'
+import { CATEGORY_NAMES, orderCategories } from '../../lib/categories'
 import type { Product } from '../../lib/types'
 import { Spinner } from '../../components/Spinner'
 import { useToast } from '../../context/ToastContext'
@@ -23,9 +24,10 @@ export function ProductsPanel({ isAdmin }: { isAdmin: boolean }) {
   const [confirmDelete, setConfirmDelete] = useState<Product | null>(null)
   const [search, setSearch] = useState('')
 
-  const categories = Array.from(
-    new Set((products ?? []).map((p) => p.category)),
-  ).sort((a, b) => a.localeCompare(b))
+  const categories = orderCategories([
+    ...CATEGORY_NAMES,
+    ...(products ?? []).map((p) => p.category),
+  ])
 
   const load = async () => {
     try {
