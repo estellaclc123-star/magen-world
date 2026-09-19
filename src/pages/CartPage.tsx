@@ -1,14 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, ShoppingCart, Trash2, Plus } from 'lucide-react'
 import { formatPrice } from '../lib/format'
-import { FREE_DELIVERY_THRESHOLD } from '../lib/types'
 import { QuantityStepper } from '../components/QuantityStepper'
 import { EmptyState } from '../components/EmptyState'
 import { useCart } from '../context/CartContext'
+import { useSettings } from '../context/SettingsContext'
 import { useSEO } from '../lib/seo'
 
 export default function CartPage() {
   const { items, subtotal, deliveryFee, total, setQuantity, removeItem } = useCart()
+  const { settings } = useSettings()
   const navigate = useNavigate()
 
   useSEO({
@@ -24,7 +25,7 @@ export default function CartPage() {
         <h1 className="mb-6 font-display text-3xl font-bold text-stone-900">Your Cart</h1>
         <EmptyState
           title="Your cart is empty"
-          message="Browse our products and add something you love. Free delivery on orders over GH₵1,500."
+          message={`Browse our products and add something you love. Free delivery on orders over ${formatPrice(settings.free_delivery_threshold)}.`}
           actionLabel="Start shopping"
           actionTo="/shop"
         />
@@ -32,8 +33,8 @@ export default function CartPage() {
     )
   }
 
-  const remainingForFree = FREE_DELIVERY_THRESHOLD - subtotal
-  const progress = Math.min(100, (subtotal / FREE_DELIVERY_THRESHOLD) * 100)
+  const remainingForFree = settings.free_delivery_threshold - subtotal
+  const progress = Math.min(100, (subtotal / settings.free_delivery_threshold) * 100)
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

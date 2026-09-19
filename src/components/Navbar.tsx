@@ -4,6 +4,7 @@ import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useSettings } from '../context/SettingsContext'
 
 const NAV_LINKS = [
   { to: '/', label: 'Home' },
@@ -14,6 +15,7 @@ const NAV_LINKS = [
 export default function Navbar() {
   const { count } = useCart()
   const { user, profile, isDemo, signOut } = useAuth()
+  const { settings } = useSettings()
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -40,9 +42,11 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="bg-emerald-900 px-4 py-2 text-center text-xs font-medium text-emerald-50">
-        Free delivery on all orders over GH₵1,500 · Pay on delivery across Ghana
-      </div>
+      {settings.announcement_enabled && (
+        <div className="bg-emerald-900 px-4 py-2 text-center text-xs font-medium text-emerald-50">
+          {settings.announcement_text}
+        </div>
+      )}
       <nav className="border-b border-stone-200 bg-white/95 shadow-sm backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
           <button

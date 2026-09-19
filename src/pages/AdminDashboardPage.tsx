@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { LayoutDashboard, Package, ShoppingBag } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingBag, Settings } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { isSupabaseConfigured } from '../lib/supabase'
 import { useSEO } from '../lib/seo'
 import { ProductsPanel } from './admin/ProductsPanel'
 import { OrdersPanel } from './admin/OrdersPanel'
+import { SettingsPanel } from './admin/SettingsPanel'
 
-type Tab = 'dashboard' | 'products' | 'orders'
+type Tab = 'dashboard' | 'products' | 'orders' | 'settings'
 
 function isAdminAvailable(
   user: { id: string; email: string } | null,
@@ -38,6 +39,7 @@ export default function AdminDashboardPage() {
     { value: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { value: 'products', label: 'Products', icon: Package },
     { value: 'orders', label: 'Orders', icon: ShoppingBag },
+    { value: 'settings', label: 'Settings', icon: Settings },
   ]
 
   return (
@@ -147,6 +149,7 @@ export default function AdminDashboardPage() {
         )}
         {tab === 'products' && <ProductsPanel isAdmin={isAdmin} />}
         {tab === 'orders' && <OrdersPanel isAdmin={isAdmin} />}
+        {tab === 'settings' && <SettingsPanel />}
       </div>
     </div>
   )

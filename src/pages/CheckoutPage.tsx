@@ -14,6 +14,7 @@ import { formatPrice } from '../lib/format'
 import { PAYMENT_METHODS, type PaymentMethod } from '../lib/types'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useSettings } from '../context/SettingsContext'
 import { useSEO } from '../lib/seo'
 
 interface FieldErrors {
@@ -26,6 +27,7 @@ interface FieldErrors {
 export default function CheckoutPage() {
   const { items, subtotal, deliveryFee, total, clearCart } = useCart()
   const { user, isDemo } = useAuth()
+  const { settings } = useSettings()
   const navigate = useNavigate()
 
   useSEO({
@@ -86,6 +88,7 @@ export default function CheckoutPage() {
         items,
         { name: name.trim(), email: email.trim(), phone: phone.trim(), address: address.trim() },
         payment,
+        settings,
       )
       clearCart()
       navigate(`/confirmation/${result.orderId}`, {

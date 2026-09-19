@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from 'react'
 import { computeDeliveryFee } from '../lib/api'
+import { useSettings } from './SettingsContext'
 import type { CartItem, Product } from '../lib/types'
 
 const CART_KEY = 'magen.cart'
@@ -37,6 +38,7 @@ function readCart(): CartItem[] {
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>(readCart)
+  const { settings } = useSettings()
 
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(items))
@@ -90,9 +92,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { count, subtotal, deliveryFee, total } = useMemo(() => {
     const count = items.reduce((sum, i) => sum + i.quantity, 0)
     const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
-    const deliveryFee = computeDeliveryFee(subtotal)
+    const deliveryFee = computeDeliveryFee(subtotal, settings)
     return { count, subtotal, deliveryFee, total: subtotal + deliveryFee }
-  }, [items])
+  }, [items, settings])
 
   return (
     <CartContext.Provider

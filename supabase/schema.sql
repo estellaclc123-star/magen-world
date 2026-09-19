@@ -48,6 +48,17 @@ create table if not exists public.order_items (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.site_settings (
+  id smallint primary key default 1 check (id = 1),
+  announcement_enabled boolean not null default true,
+  announcement_text text not null default 'Free delivery on all orders over GH₵1,500 · Pay on delivery across Ghana',
+  delivery_fee numeric(12, 2) not null default 35 check (delivery_fee >= 0),
+  free_delivery_threshold numeric(12, 2) not null default 1500 check (free_delivery_threshold >= 0),
+  updated_at timestamptz not null default now()
+);
+
+insert into public.site_settings (id) values (1) on conflict (id) do nothing;
+
 create index if not exists idx_products_category on public.products (category);
 create index if not exists idx_products_featured on public.products (featured) where featured;
 create index if not exists idx_orders_user on public.orders (user_id, created_at desc);
@@ -57,6 +68,7 @@ alter table public.profiles enable row level security;
 alter table public.products enable row level security;
 alter table public.orders enable row level security;
 alter table public.order_items enable row level security;
+alter table public.site_settings enable row level security;
 
 revoke all on table public.profiles from anon, authenticated;
 grant select on public.profiles to anon, authenticated;
@@ -139,6 +151,21 @@ create policy "products_admin_delete"
   for delete
   to authenticated
   using (public.is_admin());
+
+drop policy if exists "site_settings_public_read" on public.site_settings;
+create policy "site_settings_public_read"
+  on public.site_settings
+  for select
+  to anon, authenticated
+  using (true);
+
+drop policy if exists "site_settings_admin_update" on public.site_settings;
+create policy "site_settings_admin_update"
+  on public.site_settings
+  for update
+  to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
 
 drop policy if exists "profiles_select_own_or_admin" on public.profiles;
 create policy "profiles_select_own_or_admin"

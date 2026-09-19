@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Sparkles, Tag, Truck, ShieldCheck, RefreshCw } from 'lucide-react'
 import { getProducts } from '../lib/api'
+import { formatPrice } from '../lib/format'
 import { SAMPLE_PRODUCTS } from '../lib/mockData'
 import type { Product } from '../lib/types'
 import { ProductCard } from '../components/ProductCard'
@@ -9,6 +10,7 @@ import { SectionHeader } from '../components/SectionHeader'
 import { Spinner } from '../components/Spinner'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
+import { useSettings } from '../context/SettingsContext'
 import { useSEO } from '../lib/seo'
 
 function useProducts() {
@@ -40,6 +42,7 @@ export default function HomePage() {
   const { products, loading } = useProducts()
   const { addItem } = useCart()
   const { toast } = useToast()
+  const { settings } = useSettings()
 
   const featured = products.filter((p) => p.featured).slice(0, 4)
   const discounted = products
@@ -281,7 +284,7 @@ export default function HomePage() {
               {[
                 { value: `${categories.length || '5'}`, label: 'Categories' },
                 { value: `${products.length || '0'}`, label: 'Products' },
-                { value: 'GH₵1,500+', label: 'Free delivery' },
+                { value: `${formatPrice(settings.free_delivery_threshold)}+`, label: 'Free delivery' },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-2xl bg-emerald-800/70 p-6">
                   <p className="font-display text-3xl font-bold text-amber-300">{stat.value}</p>

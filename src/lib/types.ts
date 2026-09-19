@@ -84,5 +84,9 @@ export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
   { value: 'mobile_money', label: 'Mobile Money (MoMo)' },
 ]
 
-export const DELIVERY_FEE = 35
-export const FREE_DELIVERY_THRESHOLD = 1500
+export interface SiteSettings {
+  announcement_enabled: boolean
+  announcement_text: string
+  delivery_fee: number
+  free_delivery_threshold: number
+}

@@ -19,6 +19,7 @@ import { QuantityStepper } from '../components/QuantityStepper'
 import { Spinner } from '../components/Spinner'
 import { useCart } from '../context/CartContext'
 import { useToast } from '../context/ToastContext'
+import { useSettings } from '../context/SettingsContext'
 import { useSEO } from '../lib/seo'
 
 export default function ProductDetailsPage() {
@@ -26,6 +27,7 @@ export default function ProductDetailsPage() {
   const navigate = useNavigate()
   const { addItem } = useCart()
   const { toast } = useToast()
+  const { settings } = useSettings()
 
   const [product, setProduct] = useState<Product | null>(null)
   const [related, setRelated] = useState<Product[]>([])
@@ -222,7 +224,7 @@ export default function ProductDetailsPage() {
 
           <div className="mt-8 grid gap-3 rounded-2xl border border-stone-200 bg-white p-4 sm:grid-cols-3">
             {[
-              { icon: Truck, title: 'Delivery', text: '2–4 days, free over GH₵1,500' },
+              { icon: Truck, title: 'Delivery', text: `2–4 days, free over ${formatPrice(settings.free_delivery_threshold)}` },
               { icon: ShieldCheck, title: 'Secure', text: 'COD & Mobile Money' },
               { icon: RotateCcw, title: 'Returns', text: '7-day easy returns' },
             ].map((b) => (

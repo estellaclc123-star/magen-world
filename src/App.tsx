@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
+import { SettingsProvider } from './context/SettingsContext'
 import { ToastProvider } from './context/ToastContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
@@ -65,11 +66,13 @@ export default function App() {
   return (
     <BrowserRouter>
       <ToastProvider>
-        <AuthProvider>
-          <CartProvider>
-            <AppContent />
-          </CartProvider>
-        </AuthProvider>
+        <SettingsProvider>
+          <AuthProvider>
+            <CartProvider>
+              <AppContent />
+            </CartProvider>
+          </AuthProvider>
+        </SettingsProvider>
       </ToastProvider>
     </BrowserRouter>
   )

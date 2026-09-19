@@ -1,8 +1,7 @@
 import { supabase } from './supabase'
 import { SAMPLE_PRODUCTS } from './mockData'
+import { DEFAULT_SETTINGS } from './settings'
 import {
-  DELIVERY_FEE,
-  FREE_DELIVERY_THRESHOLD,
   type CartItem,
   type CustomerInfo,
   type Order,
@@ -10,6 +9,7 @@ import {
   type OrderStatus,
   type PaymentMethod,
   type Product,
+  type SiteSettings,
 } from './types'
 
 const DEMO_PRODUCTS_KEY = 'magen.demo.products'
@@ -204,17 +204,21 @@ export interface PlacementResult {
   total: number
 }
 
-export function computeDeliveryFee(subtotal: number): number {
-  return subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
+export function computeDeliveryFee(
+  subtotal: number,
+  settings: Pick<SiteSettings, 'delivery_fee' | 'free_delivery_threshold'> = DEFAULT_SETTINGS,
+): number {
+  return subtotal >= settings.free_delivery_threshold ? 0 : settings.delivery_fee
 }
 
 export async function placeCustomerOrder(
   items: CartItem[],
   customer: CustomerInfo,
   payment: PaymentMethod,
+  settings: SiteSettings = DEFAULT_SETTINGS,
 ): Promise<PlacementResult> {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const deliveryFee = computeDeliveryFee(subtotal)
+  const deliveryFee = computeDeliveryFee(subtotal, settings)
   const total = subtotal + deliveryFee
 
   if (supabase) {
