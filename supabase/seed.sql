@@ -267,4 +267,4 @@ from (values
   ('50000000-0000-4000-8000-000000000011', 'Beauty & Cosmetics'),
   ('50000000-0000-4000-8000-000000000012', 'Beauty & Cosmetics')
 ) as t(id, category)
-where p.id = t.id;
+where p.id = t.id::uuid;
