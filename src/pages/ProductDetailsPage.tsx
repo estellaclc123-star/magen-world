@@ -11,6 +11,7 @@ import {
   CheckCircle2,
 } from 'lucide-react'
 import { getProduct, getProducts } from '../lib/api'
+import { SITE_URL } from '../lib/business'
 import { SAMPLE_PRODUCTS } from '../lib/mockData'
 import { formatPrice } from '../lib/format'
 import type { Product } from '../lib/types'
@@ -41,6 +42,26 @@ export default function ProductDetailsPage() {
       : 'View product details at Magen World.',
     path: product ? `/product/${product.id}` : '/product',
     image: product?.image_url,
+    jsonLd: product
+      ? [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            description: product.description,
+            image: [product.image_url],
+            sku: product.id,
+            brand: { '@type': 'Brand', name: 'Magen World' },
+            offers: {
+              '@type': 'Offer',
+              url: `${SITE_URL}/product/${product.id}`,
+              priceCurrency: 'GHS',
+              price: product.price,
+              availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            },
+          },
+        ]
+      : undefined,
   })
 
   useEffect(() => {

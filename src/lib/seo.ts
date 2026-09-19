@@ -7,7 +7,10 @@ interface SEOProps {
   path?: string
   image?: string
   noindex?: boolean
+  jsonLd?: object
 }
+
+const JSONLD_ID = 'magen-jsonld'
 
 function setMeta(attr: 'name' | 'property', key: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`)
@@ -19,7 +22,24 @@ function setMeta(attr: 'name' | 'property', key: string, content: string) {
   el.setAttribute('content', content)
 }
 
-export function useSEO({ title, description, path = '/', image, noindex }: SEOProps) {
+function setJsonLd(jsonLd: object | undefined) {
+  document.getElementById(JSONLD_ID)?.remove()
+  if (!jsonLd) return
+  const script = document.createElement('script')
+  script.type = 'application/ld+json'
+  script.id = JSONLD_ID
+  script.textContent = JSON.stringify(jsonLd)
+  document.head.appendChild(script)
+}
+
+export function useSEO({
+  title,
+  description,
+  path = '/',
+  image,
+  noindex,
+  jsonLd,
+}: SEOProps) {
   useEffect(() => {
     const fullTitle = title ? `${title} | ${'Magen World'}` : 'Magen World'
     document.title = fullTitle
@@ -41,9 +61,11 @@ export function useSEO({ title, description, path = '/', image, noindex }: SEOPr
       link.href = `${SITE_URL}${path}`
       document.head.appendChild(link)
     }
+    setJsonLd(jsonLd)
     if (noindex) setMeta('name', 'robots', 'noindex')
     return () => {
       if (noindex) document.head.querySelector('meta[name="robots"]')?.remove()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, description, path, image, noindex])
 }
